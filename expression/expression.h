@@ -27,7 +27,6 @@ struct Lexem {
     LexemType type;
     func_type function;
     
-    // Конструкторы
     Lexem() : name(""), value(0), priority(0), type(ERROR), function(nullptr) {}
     
     Lexem(const std::string &n, LexemType t, double v = 0, func_type f = nullptr, int p = 0) 
@@ -44,6 +43,7 @@ private:
     
 public:
     Expression(const std::string& str);
+    //Expression(const Expression &other);
 
     ~Expression();
     

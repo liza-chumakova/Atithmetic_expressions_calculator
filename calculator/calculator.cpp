@@ -17,7 +17,7 @@ void Calculator::print_menu() const {
 void Calculator::create_expression() {
     std::cout << "Enter expression: ";
     std::string expr_str;
-    std::getline(std::cin, expr_str);
+    std::cin >> expr_str;
     
     try {
         Expression expr(expr_str);
@@ -25,11 +25,12 @@ void Calculator::create_expression() {
         std::cout << "Expression added successfully!\n";
         std::cout << "Variables in expression: ";
         
-        auto vars = expr.get_variables();
+        List<std::string> vars = expr.get_variables();
         if (vars.is_empty()) {
             std::cout << "none";
-        } else {
-            for (auto it = vars.begin(); it != vars.end(); ++it) {
+        }
+        else {
+            for (List<std::string>::Iterator it = vars.begin(); it != vars.end(); ++it) {
                 std::cout << *it << " ";
             }
         }
@@ -156,11 +157,11 @@ void Calculator::show_expressions() const {
         return;
     }
     
-    List<Expression> expressions_copy = expressions;
-    Node<Expression> cur_expression = expressions_copy.head()->_value;
+    //List<Expression> expressions_copy = expressions;
+    Node<Expression> cur_expression = expressions.head()->_value;
     std::cout << "\n=== Expressions List ===\n";
     size_t counter = 1;
-    for (List<Expression>::Iterator it = expressions_copy.begin(); it != expressions_copy.end(); ++it) {
+    for (List<Expression>::ConstIterator it = expressions.cbegin(); it != expressions.cend(); ++it) {
         std::cout << counter++ << ". " << cur_expression._value.get_original() << "\n";
         cur_expression = cur_expression._next->_value;
     }

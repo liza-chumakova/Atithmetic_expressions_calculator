@@ -1,2 +1,3 @@
 create_executable_project(Application)
-#add_depend(Parser Parser ../parser/parser.h)
+add_depend(Application Parser parser)
+add_depend(Application Brackets lib_brackets)

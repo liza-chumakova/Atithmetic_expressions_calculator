@@ -5,7 +5,7 @@ template <typename T>
 struct Node {
     T _value;
     Node<T>* _next;
-    Node(T value, Node<T>* next = nullptr): _value(value), _next(next){}
+    Node(T value, Node<T>* next = nullptr): _value(value), _next(next) {}
 };
 
 template <typename T> class List;
@@ -64,8 +64,28 @@ public:
         Iterator& operator++();   //++x
     };
 
+    class ConstIterator {
+        const Node<T>* _current;
+    public:
+        ConstIterator() : _current(nullptr) {}
+        ConstIterator(const Node<T>* pos) : _current(pos) {}
+        ConstIterator(const ConstIterator& other) : _current(other._current) {}
+
+        ConstIterator& operator=(const ConstIterator& other);
+        const T& operator*() const;
+
+        bool operator==(const ConstIterator& other) const;
+        bool operator!=(const ConstIterator& other) const;
+
+        ConstIterator operator++(int); //x++
+        ConstIterator& operator++();   //++x
+    };
+
     Iterator begin() { return Iterator(_head); }
     Iterator end() {return Iterator(nullptr); }
+
+    ConstIterator cbegin() const { return ConstIterator(_head); }
+    ConstIterator cend() const {return ConstIterator(nullptr); }
 };
 
 template <class T>
@@ -376,6 +396,43 @@ typename List<T>::Iterator List<T>::Iterator::operator++(int) {
 
 template <typename T>
 typename List<T>::Iterator& List<T>::Iterator::operator++() {
+    if(_current != nullptr) {
+        _current = _current->_next;
+    }
+    return *this;
+}
+
+//CLASS CONST ITERATOR
+
+template <typename T>
+typename List<T>::ConstIterator& List<T>::ConstIterator::operator=(const ConstIterator& other) {
+    this->_current = other._current;
+    return *this;
+}
+template <typename T>
+const T& List<T>::ConstIterator::operator*() const {
+    return _current->_value;
+}
+
+template <typename T>
+bool List<T>::ConstIterator::operator==(const ConstIterator& other) const {
+    return _current == other._current;
+}
+
+template <typename T>
+bool List<T>::ConstIterator::operator!=(const ConstIterator& other) const {
+    return _current != other._current;
+}
+
+template <typename T>
+typename List<T>::ConstIterator List<T>::ConstIterator::operator++(int) {
+    ConstIterator temp = *this;
+    ++(*this);
+    return temp;
+}
+
+template <typename T>
+typename List<T>::ConstIterator& List<T>::ConstIterator::operator++() {
     if(_current != nullptr) {
         _current = _current->_next;
     }

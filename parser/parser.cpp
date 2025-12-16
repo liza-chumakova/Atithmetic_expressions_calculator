@@ -45,7 +45,7 @@ namespace {
 
 namespace Parser {
     List<Lexem> parse(const std::string& expression) {
-        //! @todo Сделать проверку скобок в начале
+        // Проверка скобок
         size_t j = 0;
         std::string toCheckBrackets = "";
         const size_t length = expression.length();
