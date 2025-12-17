@@ -1,7 +1,5 @@
 #include "calculator.h"
 #include <iostream>
-#include <iomanip>
-#include <limits>
 
 void Calculator::print_menu() const {
     std::cout << "\n============= Arithmetic Expressions Calculator =============\n";
@@ -18,33 +16,22 @@ void Calculator::create_expression() {
     std::cout << "Enter expression: ";
     std::string expr_str;
     std::cin >> expr_str;
-    
-    try {
-        Expression expr(expr_str);
-        expressions.push_back(expr);
-        std::cout << "Expression added successfully!\n";
-        std::cout << "Variables in expression: ";
-        
-        List<std::string> vars = expr.get_variables();
-        if (vars.is_empty()) {
-            std::cout << "none";
-        }
-        else {
-            for (List<std::string>::Iterator it = vars.begin(); it != vars.end(); ++it) {
-                std::cout << *it << " ";
-            }
-        }
-        std::cout << "\n";
+
+    Expression expr(expr_str);
+    expressions.push_back(expr);
+    std::cout << "Expression added successfully!\n";
+    std::cout << "Variables in expression: ";
+
+    List<std::string> vars = expr.get_variables();
+    if (vars.is_empty()) {
+        std::cout << "none";
     }
-    catch (const std::exception& e) {
-        std::cout << "Error: " << e.what() << "\n";
-        
-        // Показываем место ошибки
-        size_t pos = 0;
-        if (std::string(e.what()).find("at position") != std::string::npos) {
-            // Извлекаем позицию из сообщения об ошибке
+    else {
+        for (List<std::string>::Iterator it = vars.begin(); it != vars.end(); ++it) {
+            std::cout << *it << " ";
         }
     }
+    std::cout << "\n";
 }
 
 void Calculator::delete_expression() {

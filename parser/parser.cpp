@@ -3,10 +3,8 @@
 
 #include "parser.h"
 
-#include <cctype>
 #include <string>
 #include <cmath>
-#include <stdexcept>
 
 namespace {
 // Проверка символа на оператор
@@ -181,7 +179,7 @@ namespace {
         if (bracket == '(' || bracket == '[' || bracket == '{') {
             type = OPEN_BRACKET;
         }
-        if (bracket == '|') {
+        else if (bracket == '|') {
             type = MODULE;
         }
         else {

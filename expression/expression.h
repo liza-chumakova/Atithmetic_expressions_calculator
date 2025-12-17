@@ -51,7 +51,7 @@ public:
     void construct_polish_record();
     
     // Установка значений переменных
-    //void set_variables(const List<double>& values);
+    void set_variables(const List<double>& values);
     
     // Установка значения конкретной переменной
     void set_variable(const std::string& name, double value);
@@ -68,12 +68,3 @@ public:
     // Проверка, все ли переменные заданы
     bool all_variables_set() const;
 };
-
-// Математические функции (градусы в радианы)
-// namespace MathFunctions {
-//     double degToRad(double degrees);
-//     double sin_deg(double degrees);
-//     double cos_deg(double degrees);
-//     double tg_deg(double degrees);
-//     double abs_val(double value);
-// }

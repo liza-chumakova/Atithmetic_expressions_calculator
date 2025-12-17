@@ -18,7 +18,6 @@ Expression::~Expression()
 // Построение обратной польской записи
 void Expression::construct_polish_record() {
     Stack<Lexem> op_stack(expression.count());
-    //polish_record.clear();
 
     for (List<Lexem>::Iterator it = expression.begin(); it != expression.end(); ++it) {
         Lexem current = expression.head()->_value;
@@ -92,27 +91,27 @@ void Expression::construct_polish_record() {
 }
 
 // Установка значений переменных
-// void Expression::set_variables(const List<double>& values_in) {
-//     List<double> values = values_in;
-//     // Предполагается, что значения передаются в том же порядке, что и переменные
-//     List<std::string> var_list = get_variables();
-//     if (var_list.count() != values.count()) {
-//         throw std::logic_error("Number of values doesn't match number of variables");
-//     }
+void Expression::set_variables(const List<double>& values_in) {
+    List<double> values = values_in;
+    // Предполагается, что значения передаются в том же порядке, что и переменные
+    List<std::string> var_list = get_variables();
+    if (var_list.count() != values.count()) {
+        throw std::logic_error("Number of values doesn't match number of variables");
+    }
     
-//     List<std::string>::Iterator var_it = var_list.begin();
-//     List<double>::Iterator val_it = values.begin();
+    List<std::string>::Iterator var_it = var_list.begin();
+    List<double>::Iterator val_it = values.begin();
 
-//     // for (List<Lexem>::Iterator it = expression.begin(); it != expression.end(); ++it) {
-//     //     Lexem current = expression.head()->_value;
-//     // }
+    // for (List<Lexem>::Iterator it = expression.begin(); it != expression.end(); ++it) {
+    //     Lexem current = expression.head()->_value;
+    // }
     
-//     while (var_it != var_list.end() && val_it != values.end()) {
-//         variables[*var_it] = *val_it;
-//         ++var_it;
-//         ++val_it;
-//     }
-// }
+    while (var_it != var_list.end() && val_it != values.end()) {
+        variables[*var_it] = *val_it;
+        ++var_it;
+        ++val_it;
+    }
+}
 
 
 void Expression::set_variable(const std::string& name, double value) {
