@@ -132,10 +132,15 @@ void Calculator::calculate_expression() {
         ++it;
     }
     Expression exp = *it;
-    
-    double result = exp.calculate();
-    std::cout << "Result: " << result << "\n";
-    
+
+    double result = 0.0;
+    try {
+        result = exp.calculate();
+        std::cout << "Result: " << result << "\n";
+    }
+    catch(std::logic_error err) {
+        std::cerr << "Calculation error: " << err.what() << std::endl;
+    }
 }
 
 void Calculator::show_expressions() const {
@@ -149,8 +154,13 @@ void Calculator::show_expressions() const {
     std::cout << "\n=== Expressions List ===\n";
     size_t counter = 1;
     for (List<Expression>::ConstIterator it = expressions.cbegin(); it != expressions.cend(); ++it) {
-        std::cout << counter++ << ". " << cur_expression._value.get_original() << "\n";
-        cur_expression = cur_expression._next->_value;
+        std::cout << counter++ << ". " << (*it).get_original() << "\n";
+        // if (._next) {
+        //     //cur_expression = *cur_expression._next;
+        // }
+        // else {
+        //     break;
+        // }
     }
 }
 

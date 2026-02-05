@@ -23,6 +23,7 @@ public:
     inline int size() const noexcept;
     inline int get_top() const noexcept;
     inline T top() const;
+    inline int elements_count() const noexcept;
 
     //int size() const noexcept;
 
@@ -71,7 +72,7 @@ Stack<T>::Stack(int size) {
     {
         _data[i] = T();
     }
-    _top = - 1;
+    _top = -1;
 }
 
 template <typename T>
@@ -114,6 +115,11 @@ template <typename T>
 inline T Stack<T>::top() const
 {
     return _data[_top];
+}
+
+template <typename T>
+inline int Stack<T>::elements_count() const noexcept {
+    return _top + 1;
 }
 
 template <typename T>

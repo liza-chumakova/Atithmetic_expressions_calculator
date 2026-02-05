@@ -20,7 +20,7 @@ void Expression::construct_polish_record() {
     Stack<Lexem> op_stack(expression.count());
 
     for (List<Lexem>::Iterator it = expression.begin(); it != expression.end(); ++it) {
-        Lexem current = expression.head()->_value;
+        Lexem current = *it;
         
         switch (current.type) {
             case NUMBER:
@@ -47,9 +47,13 @@ void Expression::construct_polish_record() {
                     target_open = '{';
                 }
                 
-                while (op_stack.top().type != OPEN_BRACKET) {
+                while (!op_stack.is_empty() && op_stack.top().type != OPEN_BRACKET) {
                     polish_record.push_back(op_stack.top());
                     op_stack.pop();
+                }
+                if (op_stack.is_empty()) {
+                    std::cout << "STACK IS EMPTY" << std::endl;
+                    break;
                 }
                 
                 // Проверяем соответствие скобок
@@ -58,6 +62,10 @@ void Expression::construct_polish_record() {
                 }
                 
                 op_stack.pop(); // Удаляем открывающую скобку
+                if (op_stack.is_empty()) {
+                    std::cout << "STACK IS EMPTY" << std::endl;
+                    break;
+                }
                 
                 // Если на вершине стека функция, добавляем ее в выход
                 if (op_stack.top().type == FUNCTION) {
@@ -72,13 +80,14 @@ void Expression::construct_polish_record() {
                 
             case OPERATOR:
             // Если сверху у стека оператор выше по приоритету, то пушим сначала его
-                if (op_stack.top().type == OPERATOR) {
+                
+                while (!op_stack.is_empty() && op_stack.top().type == OPERATOR) {
                     if (op_stack.top().priority >= current.priority) {
                         polish_record.push_back(op_stack.top());
                         op_stack.pop();
                     }
                 }
-                polish_record.push_back(current);
+                op_stack.push(current);
                 break;
         }
     }
@@ -91,27 +100,27 @@ void Expression::construct_polish_record() {
 }
 
 // Установка значений переменных
-void Expression::set_variables(const List<double>& values_in) {
-    List<double> values = values_in;
-    // Предполагается, что значения передаются в том же порядке, что и переменные
-    List<std::string> var_list = get_variables();
-    if (var_list.count() != values.count()) {
-        throw std::logic_error("Number of values doesn't match number of variables");
-    }
+// void Expression::set_variables(const List<double>& values_in) {
+//     List<double> values = values_in;
+//     // Предполагается, что значения передаются в том же порядке, что и переменные
+//     List<std::string> var_list = get_variables();
+//     if (var_list.count() != values.count()) {
+//         throw std::logic_error("Number of values doesn't match number of variables");
+//     }
     
-    List<std::string>::Iterator var_it = var_list.begin();
-    List<double>::Iterator val_it = values.begin();
+//     List<std::string>::Iterator var_it = var_list.begin();
+//     List<double>::Iterator val_it = values.begin();
 
-    // for (List<Lexem>::Iterator it = expression.begin(); it != expression.end(); ++it) {
-    //     Lexem current = expression.head()->_value;
-    // }
+//     // for (List<Lexem>::Iterator it = expression.begin(); it != expression.end(); ++it) {
+//     //     Lexem current = expression.head()->_value;
+//     // }
     
-    while (var_it != var_list.end() && val_it != values.end()) {
-        variables[*var_it] = *val_it;
-        ++var_it;
-        ++val_it;
-    }
-}
+//     while (var_it != var_list.end() && val_it != values.end()) {
+//         variables[*var_it] = *val_it;
+//         ++var_it;
+//         ++val_it;
+//     }
+// }
 
 
 void Expression::set_variable(const std::string& name, double value) {
@@ -123,14 +132,14 @@ List<std::string> Expression::get_variables() const {
     List<Lexem> expression_copy = expression;
     List<std::string> result;
     
-    for (List<Lexem>::Iterator it = expression_copy.begin(); it != expression_copy.end(); ++it) {
+    for (List<Lexem>::ConstIterator it = expression_copy.cbegin(); it != expression_copy.cend(); ++it) {
         Lexem current = expression_copy.head()->_value;
         if (current.type == VARIABLE) {
             std::string name = current.name;
             bool found = false;
             
             // Проверяем, нет ли уже этой переменной в списке
-            for (List<std::string>::Iterator r_it = result.begin(); r_it != result.end(); ++r_it) {
+            for (List<std::string>::ConstIterator r_it = result.cbegin(); r_it != result.cend(); ++r_it) {
                 if (*r_it == name) {
                     found = true;
                     break;
@@ -170,29 +179,35 @@ double Expression::calculate() {
     }
     
     Stack<double> calc_stack(polish_record.count());
-    //Не создается стек
+    std::cout << "SIZE: " << calc_stack.size() << std::endl;
     
     for (List<Lexem>::Iterator it = polish_record.begin(); it != polish_record.end(); ++it) {
-        Lexem current = polish_record.head()->_value;
+        Lexem current = *it;
+        std::cout << "STEP 2" << std::endl;
         
         switch (current.type) {
             case NUMBER:
                 calc_stack.push(current.value);
+                std::cout << "PUSHNUM: " << current.value << std::endl;
                 break;
                 
             case VARIABLE:
                 calc_stack.push(variables[current.name]);
+                std::cout << "PUSHVAR: " << variables[current.name] << std::endl;
                 break;
                 
             case OPERATOR: {
+                std::cout << "OPERATOR: " << current.name << std::endl;
                 if (calc_stack.size() < 2) {
                     throw std::logic_error("Invalid expression: not enough operands");
                 }
                 
                 // Извлекаются два элемента, первый - второй, второй - первый
-                double b = calc_stack.top();
+                const double b = calc_stack.top();
+                std::cout << "POPB: " << b << std::endl;
                 calc_stack.pop();
-                double a = calc_stack.top();
+                const double a = calc_stack.top();
+                std::cout << "POPA: " << a << std::endl;
                 calc_stack.pop();
                 
                 double result = 0;
@@ -205,7 +220,8 @@ double Expression::calculate() {
                     result = a / b;
                 }
                 else if (current.name == "^") result = pow(a, b);
-                
+
+                std::cout << "PUSHRES: " << result << std::endl;
                 calc_stack.push(result);
                 break;
             }
@@ -214,8 +230,10 @@ double Expression::calculate() {
                 if (calc_stack.is_empty()) {
                     throw std::logic_error("Invalid expression: no argument for function");
                 }
+                std::cout << "FUNCTION: " << current.name << std::endl;
                 
                 double arg = calc_stack.top();
+                std::cout << "POPARG: " << arg << std::endl;
                 calc_stack.pop();
                 
                 double result = 0;
@@ -231,7 +249,8 @@ double Expression::calculate() {
         }
     }
     
-    if (calc_stack.size() != 1) {
+    if (calc_stack.elements_count() != 1) {
+        std::cerr << "Invalid expression: calc_stack size : " << calc_stack.elements_count() << std::endl;
         throw std::logic_error("Invalid expression");
     }
     
